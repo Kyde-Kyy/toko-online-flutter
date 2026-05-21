@@ -98,7 +98,7 @@ class _TokoScreenState extends State<TokoScreen> {
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.5,
+              childAspectRatio: 0.55,
             ),
             itemCount: _dataProduk.length,
             itemBuilder: (context, index) {
@@ -116,19 +116,27 @@ class _TokoScreenState extends State<TokoScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Harga'),
-                            Text('Stok'),
+                            // Text('Harga'),
+                            // Text('Stok'),
                           ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(produk.harga.toString()),
-                            Text(produk.stok.toString()),
+                            // Text(produk.stok.toString()),
                           ],
                         ),
                         ElevatedButton(
-                            onPressed: () {}, child: Text('Add to Cart')),
+                            onPressed: () {
+                              setState(() {
+                                _dataKeranjang.add(Keranjang(produk: produk));
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Produk ditambahkan')));
+                            },
+                            child: Text('Add to Cart')),
                       ],
                     ),
                     child: Text(''),
