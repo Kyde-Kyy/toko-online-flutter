@@ -130,7 +130,14 @@ class _TokoScreenState extends State<TokoScreen> {
                         ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                _dataKeranjang.add(Keranjang(produk: produk));
+                                if (_dataKeranjang.any(
+                                  (element) => element.produk.id == produk.id,
+                                )) {
+                                  int index = _dataKeranjang.indexWhere((element) => element.produk.id == produk.id,);
+                                  _dataKeranjang[index].tambahQty();
+                                } else {
+                                  _dataKeranjang.add(Keranjang(produk: produk));
+                                }
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
