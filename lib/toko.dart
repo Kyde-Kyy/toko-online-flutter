@@ -1,6 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:latihan5/app_config.dart';
+import 'package:latihan5/kategori.dart';
 import 'package:latihan5/produk.dart';
 
 class TokoScreen extends StatefulWidget {
@@ -13,12 +14,41 @@ class TokoScreen extends StatefulWidget {
 class _TokoScreenState extends State<TokoScreen> {
   int _indexMenu = 0;
   List<Produk> _dataProduk = [];
+  List<Kategori> _dataKategori = [];
   List<Keranjang> _dataKeranjang = [];
 
   @override
   void initState() {
     _getDataProduk();
+    _getDataKategori();
     super.initState();
+  }
+
+  void _getDataKategori() async {
+    try {
+      final data = await AppConfig().database.listDocuments(
+            databaseId: AppConfig().databaseID,
+            collectionId: 'kategori',
+          );
+
+      List<Kategori> dataKategori = [];
+      for (var element in data.documents) {
+        dataKategori.add(Kategori(
+          id: element.$id,
+          nama: element.data['nama'],
+        ));
+      }
+      dataKategori.add(
+        Kategori(id: '', nama: 'Semua Kategori'),
+      );
+      setState(() {
+        _dataKategori = dataKategori;
+      });
+    } on AppwriteException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error Get Data Kategori : $e')),
+      );
+    }
   }
 
   void _getDataProduk() async {
@@ -52,7 +82,64 @@ class _TokoScreenState extends State<TokoScreen> {
   }
 
   Widget daftarProduk() {
-    return Text('Daftar Produk');
+    return Column(
+      spacing: 12,
+      children: [
+        DropdownMenu(
+          label: Text('Filter Kategori'),
+          width: double.infinity,
+          dropdownMenuEntries: _dataKategori
+              .map(
+                (e) => DropdownMenuEntry(value: e.id, label: e.nama),
+              )
+              .toList(),
+        ),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.5,
+            ),
+            itemCount: _dataProduk.length,
+            itemBuilder: (context, index) {
+              var produk = _dataProduk[index];
+
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridTile(
+                    header: Image.network(produk.fotoUrl),
+                    footer: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(produk.nama),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Harga'),
+                            Text('Stok'),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(produk.harga.toString()),
+                            Text(produk.stok.toString()),
+                          ],
+                        ),
+                        ElevatedButton(
+                            onPressed: () {}, child: Text('Add to Cart')),
+                      ],
+                    ),
+                    child: Text(''),
+                  ),
+                ),
+              );
+            },
+          ),
+        )
+      ],
+    );
   }
 
   Widget daftarKeranjang() {
