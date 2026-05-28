@@ -9,6 +9,7 @@ class AppConfig {
   final String storageID = '6a0e7a87000932b8e827';
   final String endpoint = 'https://sgp.cloud.appwrite.io/v1';
   final String projectID = '69f2c362002c408ccf96';
+  //joZnafQu036beeb8f93b1bd6gqvNG2Lp raja ongkir
   // 69fbfe180001f1f261f5
 
   AppConfig() {
